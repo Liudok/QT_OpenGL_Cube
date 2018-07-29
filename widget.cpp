@@ -40,8 +40,7 @@ void Widget::paintGL()
     QMatrix4x4 modelViewMatrix;
     modelViewMatrix.setToIdentity();
     modelViewMatrix.translate(0.0,0.0,-1.0);
-    modelViewMatrix.rotate(30, 1.0, 0.0, 0.0);
-    modelViewMatrix.rotate(30, 0.0, 30.0, 0.0);
+    modelViewMatrix.rotate(m_rotation);
 
     m_texture->bind(0);
 
@@ -66,6 +65,30 @@ void Widget::paintGL()
     m_indexBuffer.bind();
 
     glDrawElements(GL_TRIANGLES, m_indexBuffer.size(), GL_UNSIGNED_INT, 0);
+}
+
+void Widget::mousePressEvent(QMouseEvent *event)
+{
+    if (event->buttons() == Qt::LeftButton)
+        m_mousePosition = QVector2D(event->localPos());
+    event->accept();
+}
+
+void Widget::mouseMoveEvent(QMouseEvent *event)
+{
+    if (event->buttons() != Qt::LeftButton)
+        return;
+    QVector2D diff = QVector2D(event->localPos()) - m_mousePosition;
+    m_mousePosition = QVector2D(event->localPos());
+
+    float angle = diff.length() / 2.0;
+
+    QVector3D axis = QVector3D(diff.y(), diff.x(), 0.0);
+
+    m_rotation = QQuaternion::fromAxisAndAngle(axis, angle) * m_rotation;
+
+    update();
+
 }
 
 void Widget::initShaders()

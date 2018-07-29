@@ -6,6 +6,8 @@
 #include <QOpenGLShaderProgram>
 #include <QOpenGLTexture>
 #include <QOpenGLBuffer>
+#include <QMouseEvent>
+#include <QKeyEvent>
 
 
 struct VertexData
@@ -40,12 +42,15 @@ private:
     QMatrix4x4 m_projectionMatrix;
     QOpenGLShaderProgram m_program;
     QOpenGLBuffer m_arrayBuffer;
-
-
+    QVector2D m_mousePosition;
+    QQuaternion m_rotation;
 protected:
     void initializeGL();
     void resizeGL(int w, int h);
     void paintGL();
+
+    void mousePressEvent(QMouseEvent * event);
+    void mouseMoveEvent(QMouseEvent * event);
 
     void initShaders();
     void initCube(float width);
